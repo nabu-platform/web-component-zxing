@@ -122,15 +122,27 @@ Vue.component("n-form-zxing", {
 			}
 			this.scanning = false;
 		},
+		validate: function(soft) {
+			return this.$refs.text.validate(soft);
+		},
 		decodeContinuously: function(selectedDeviceId) {
 			var self = this;
 			this.codeReader = new ZXing.BrowserDatamatrixCodeReader();
 			console.log("code reader", this.codeReader);
 			this.scanning = true;
 			this.codeReader.getVideoInputDevices().then(function(videoInputDevices) {
+				var selectedId = videoInputDevices[0].deviceId;
+				// if we have multiple we do a best effort attempt to get the "back" facing one
+				if (videoInputDevices.length > 1) {
+					videoInputDevices.forEach(function(x) {
+						if (x.label && x.label.toLowerCase().indexOf("back") >= 0) {
+							selectedId = x.deviceId;
+						}
+					})
+				}
 				// if there are multiple video input devices, we can offer a selection, for example:
 				// https://github.com/zxing-js/library/blob/master/docs/examples/qr-camera/index.html
-				self.codeReader.decodeFromInputVideoDeviceContinuously(videoInputDevices[0].deviceId, self.$refs.video, function(result, err) {
+				self.codeReader.decodeFromInputVideoDeviceContinuously(selectedId, self.$refs.video, function(result, err) {
 					if (result) {
 						self.code = result;
 						self.stop();
