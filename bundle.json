@@ -1,0 +1,18 @@
+{
+	"name": "web-component-zxing", 
+	"resources": {
+		"zxing-core.js": {
+			"url": "https://unpkg.com/@zxing/library@0.15.2/umd/index.min.js",
+			"template": false
+		},
+		"zxing.js": {
+			"url": "zxing.js"
+		}, 
+		"zxing.tpl": {
+			"url": "zxing.tpl"
+		},
+		"zxing-boostrap.js": {
+			"url": "bootstrap.js"
+		}
+	}
+}
