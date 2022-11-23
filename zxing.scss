@@ -1,0 +1,36 @@
+// @component form-zxing form-component
+@mixin form-zxing_variant_default {
+	canvas, .overlay {
+		width: 100%;
+		aspect-ratio: 3/2
+	}
+	.n-form-zxing-container {
+		position: relative;
+		.n-form-canvas-container {
+			position: relative;
+			display: inline-block;
+		}
+		.overlay {
+			border: dashed 1px #ccc;
+			display: block;
+			display: flex;
+			justify-content: center;
+			align-items: center;
+		}
+	}
+	&.n-form-zxing-scanned {
+		.overlay {
+			border: none;
+			background-color: rgba(55,55,55,0.6);
+			.n-form-qr-retry {
+				background-color: rgba(200,200,200,0.8);
+			}
+		}		
+	}
+	.n-form-zxing-retry {
+		padding: 1rem;
+		.fa {
+			margin-right: 0.7rem;
+		}
+	}
+}

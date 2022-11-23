@@ -72,6 +72,9 @@ Vue.component("n-form-zxing", {
 		switchCode: {
 			type: Boolean,
 			default: false
+		},
+		buttonClass: {
+			required: false
 		}
 	},
 	data: function() {
@@ -79,7 +82,9 @@ Vue.component("n-form-zxing", {
 			codeReader: null,
 			switchQrCode: false,
 			scanning: false,
-			code: null
+			code: null,
+			messages: [],
+			valid: null
 		}
 	},
 	created: function() {
@@ -113,7 +118,20 @@ Vue.component("n-form-zxing", {
 			return this.$services.swagger.operations["nabu.libs.misc.okapiBarcode.web.render"] != null;
 		}
 	},
+	ready: function() {
+		this.resize();
+	},
 	methods: {
+		resize: function() {
+			var width = this.$el.offsetWidth;
+			var height = (width * 2) / 3;
+			this.$refs.video.style.width = width + "px";
+			this.$refs.video.style.height = height + "px";
+			this.$refs.overlay.style.width = width + "px";
+			this.$refs.overlay.style.height = height + "px";
+			this.$refs.video.setAttribute("width", width);
+			this.$refs.video.setAttribute("height", height);
+		},
 		stop: function() {
 			if (this.codeReader) {
 				this.codeReader.stopStreams();
@@ -123,7 +141,21 @@ Vue.component("n-form-zxing", {
 			this.scanning = false;
 		},
 		validate: function(soft) {
-			return this.$refs.text.validate(soft);
+			var self = this;
+			this.messages.splice(0);
+			// this performs all basic validation and enriches the messages array to support asynchronous
+			var messages = nabu.utils.schema.json.validate(this.definition, this.value, this.mandatory);
+			self.messages.splice(0);
+			var hardMessages = messages.filter(function(x) { return !x.soft });
+			// if we are doing a soft validation and all messages were soft, set valid to unknown
+			if (soft && hardMessages.length == 0 && (messages.length > 0 || !this.value) && self.valid == null) {
+				self.valid = null;
+			}
+			else {
+				self.valid = messages.length == 0;
+				nabu.utils.arrays.merge(self.messages, nabu.utils.vue.form.localMessages(self, messages));
+			}
+			return messages;
 		},
 		decodeContinuously: function(selectedDeviceId) {
 			var self = this;

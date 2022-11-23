@@ -60,6 +60,8 @@ window.addEventListener("load", function() {
 				+ "	:switch-code='field.showScannedCode'"
 				+ "	:icon='field.icon'"
 				+ "	:zoom='field.zoom'"
+				+ "	:class=\"getChildComponentClasses('scan-component')\""
+				+ "	:button-class=\"getChildComponentClasses('scan-button')\""
 				+ "	:disabled='disabled'/>",
 			props: {
 				cell: {
@@ -99,6 +101,10 @@ window.addEventListener("load", function() {
 				placeholder: {
 					type: String,
 					required: false
+				},
+				childComponents: {
+					type: Object,
+					required: false
 				}
 			},
 			computed: {
@@ -107,6 +113,17 @@ window.addEventListener("load", function() {
 				}
 			},
 			methods: {
+				getChildComponents: function() {
+					return [{
+						title: "Scan Component (zxing)",
+						name: "scan-component",
+						component: "form-zxing"
+					}, {
+						title: "Scan Button",
+						name: "scan-button",
+						component: "button"
+					}];
+				},
 				validate: function(soft) {
 					return this.$refs.form.validate(soft);
 				},
@@ -124,6 +141,22 @@ window.addEventListener("load", function() {
 				configure: "page-form-input-zxing-configure", 
 				name: "zxing",
 				namespace: "nabu.page"
+			});
+			$services.router.register({
+				alias: "page-form-zxing",
+				enter: function(parameters) {
+					// do not modify parameters directly, this may lead to rerendering issues
+					var cloneParameters = {};
+					nabu.utils.objects.merge(cloneParameters, parameters);
+					cloneParameters.formComponent = "page-form-input-zxing";
+					cloneParameters.configurationComponent = "page-form-input-zxing-configure";
+					return new nabu.page.views.FormComponent({propsData: cloneParameters});
+				},
+				form: "zxing",
+				category: "Form",
+				name: "Zxing",
+				description: "A reader for multiple formats like data matrix",
+				icon: "page/core/images/form-text.svg"
 			});
 		});
 	}

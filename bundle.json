@@ -11,8 +11,11 @@
 		"zxing.tpl": {
 			"url": "zxing.tpl"
 		},
-		"zxing-boostrap.js": {
+		"zxing-bootstrap.js": {
 			"url": "bootstrap.js"
+		},
+		"zxing.scss": {
+			"url": "zxing.scss"
 		}
 	}
 }
