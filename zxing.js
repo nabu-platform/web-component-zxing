@@ -75,6 +75,9 @@ Vue.component("n-form-zxing", {
 		},
 		buttonClass: {
 			required: false
+		},
+		facingMode: {
+			required: false
 		}
 	},
 	data: function() {
@@ -162,7 +165,11 @@ Vue.component("n-form-zxing", {
 			this.codeReader = new ZXing.BrowserDatamatrixCodeReader();
 			console.log("code reader", this.codeReader);
 			this.scanning = true;
-			this.codeReader.getVideoInputDevices().then(function(videoInputDevices) {
+			var properties = {};
+			if (this.facingMode) {
+				properties.facingMode = this.facingMode;
+			}
+			this.codeReader.getVideoInputDevices(properties).then(function(videoInputDevices) {
 				var selectedId = videoInputDevices[0].deviceId;
 				// if we have multiple we do a best effort attempt to get the "back" facing one
 				if (videoInputDevices.length > 1) {
